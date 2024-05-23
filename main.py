@@ -19,15 +19,16 @@ def distance_from_point_to_line(x1, y1, x2, y2, point):
     return distance
 
 
-def count_object_(frame, bbox_idx, list_arr, offset, label):
+def count_object_(frame, bbox_idx, list_arr, label):
     for bbox in bbox_idx:
         x1, y1, x2, y2, cls = bbox
         cx = int(x1 + x2) // 2
         cy = int(y1 + y2) // 2
-        d = distance_from_point_to_line(0, 640, 640, 160, (cx, cy))
-        if d <= offset:
-            cv.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), 2)
-            cvzone.putTextRect(frame, f'{label}', (x1, y1), 1, 1)
+        d = int(distance_from_point_to_line(0, 640, 640, 160, (cx, cy)))
+        r = int(math.sqrt((x2 - x1)**2 + (y2 - y1)**2)) // 2
+        if d <= r:
+            # cv.circle(frame, (cx, cy), r, (255, 255, 0), 1)
+            # cvzone.putTextRect(frame, f'{label}', (x1, y1), 1, 1)
             if list_arr.count(cls) == 0:
                 list_arr.append(cls)
 
@@ -47,7 +48,7 @@ helmet_class = helmet_data.split("\n")
 
 cy1 = 427
 cx1 = 0
-offset = 6
+offset = 20
 
 other_tracker = Tracker()
 bikerider_tracker = Tracker()
@@ -123,10 +124,10 @@ while True:
                     cvzone.putTextRect(frame, f'Helmet', (x1, y1), 1, 1)
 
     bbox_no_helmet_idx = no_helmet_tracker.update(no_helmet_list)
-    count_object_(frame, bbox_no_helmet_idx, no_helmet, offset, "no helmet")
+    count_object_(frame, bbox_no_helmet_idx, no_helmet, "no helmet")
 
     bbox_helmet_idx = helmet_tracker.update(helmet_list)
-    count_object_(frame, bbox_helmet_idx, helmet, offset, "helmet")
+    count_object_(frame, bbox_helmet_idx, helmet, "helmet")
 
     countHelmet = (len(helmet))
     cvzone.putTextRect(frame, f'Helmet:{countHelmet}', (50, 30), 1, 1)
