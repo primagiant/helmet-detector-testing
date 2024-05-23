@@ -18,20 +18,21 @@ def distance_from_point_to_line(x1, y1, x2, y2, point):
 
     return distance
 
+
 def count_object_(frame, bbox_idx, list_arr, offset, label):
     for bbox in bbox_idx:
         x1, y1, x2, y2, cls = bbox
         cx = int(x1 + x2) // 2
         cy = int(y1 + y2) // 2
         d = distance_from_point_to_line(0, 640, 640, 160, (cx, cy))
-        if d <= offset:  # TODO (Garis di perbaiki garis untuk countning)
+        if d <= offset:
             cv.rectangle(frame, (x1, y1), (x2, y2), (255, 255, 0), 2)
             cvzone.putTextRect(frame, f'{label}', (x1, y1), 1, 1)
             if list_arr.count(cls) == 0:
                 list_arr.append(cls)
 
 
-video = cv.VideoCapture('./video/test2.mp4')
+video = cv.VideoCapture('./video/test.mp4')
 
 bikerider_model = YOLO('models/bikerider.pt')
 helmet_model = YOLO('models/helmet.pt')
